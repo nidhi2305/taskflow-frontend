@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaCheckCircle, FaClock } from "react-icons/fa";
 import Spinner from "../components/Spinner";
+import api from "../api/axios";
+
 const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
@@ -16,16 +18,13 @@ const Dashboard = () => {
 
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/api/tasks/dashboard/stats", {
+      const res = await api.get("/tasks/dashboard/stats", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!res.ok) throw new Error("Failed to fetch dashboard");
-
-      const data = await res.json();
-      setStats(data);
+      setStats(res.data);
 
     } catch (error) {
       console.error("Dashboard error:", error);
@@ -33,6 +32,7 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchDashboard();

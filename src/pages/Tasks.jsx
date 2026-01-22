@@ -5,6 +5,7 @@ import { FaCheckCircle, FaEdit, FaTrash, FaSearch,FaTimes} from "react-icons/fa"
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import Spinner from "../components/Spinner";
+import api from "../api/axios";
 
 const statusColors = {
   todo: "bg-blue-200 text-blue-800",
@@ -63,15 +64,13 @@ export default function TasksPage() {
         params.append("status", "overdue");   
       }
 
-      const res = await fetch(`http://localhost:5000/api/tasks?${params}`, {
+      const res = await api.get(`/tasks?${params}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!res.ok) throw new Error("Failed to fetch tasks");
-
-      const data = await res.json();
+      const data = res.data;
 
       setTasks(data.tasks);
       setTotalPages(data.totalPages);
@@ -121,17 +120,11 @@ export default function TasksPage() {
               try {
                 const token = localStorage.getItem("token");
 
-                const res = await fetch(
-                  `http://localhost:5000/api/tasks/${taskId}`,
-                  {
-                    method: "DELETE",
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  }
-                );
-
-                if (!res.ok) throw new Error("Failed to delete task");
+                await api.delete(`/tasks/${taskId}`, {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
 
                 // Remove from UI
                 setTasks((prevTasks) =>
@@ -156,24 +149,23 @@ export default function TasksPage() {
       </div>
     ));
   };
-
-
+  
+  // MARK COMPLETE
   const handleMarkComplete = async (taskId) => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: "done" }),
-      });
+      const res = await api.put(
+        `/tasks/${taskId}`,
+        { status: "done" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (!res.ok) throw new Error("Failed to mark complete");
-
-      const updatedTask = await res.json();
+      const updatedTask = res.data;
 
       // Update UI instantly
       setTasks((prevTasks) =>

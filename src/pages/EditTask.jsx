@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-
+import api from "../api/axios";
 
 export default function EditTask() {
   const { id } = useParams();
@@ -24,15 +24,13 @@ export default function EditTask() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+        const res = await api.get(`/tasks/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!res.ok) throw new Error("Failed to fetch task");
-
-        const data = await res.json();
+        const data = res.data;
 
         setTitle(data.title);
         setDescription(data.description || "");
@@ -46,6 +44,7 @@ export default function EditTask() {
 
     fetchTask();
   }, [id]);
+
 
   // Validation
   const validate = () => {
@@ -80,27 +79,26 @@ export default function EditTask() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      await api.put(
+        `/tasks/${id}`,
+        {
           title,
           description,
           dueDate,
           status,
           priority,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Failed to update task");
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (from === "details") {
-        navigate(`/tasks/${id}`);   // back to task details
+        navigate(`/tasks/${id}`);
       } else {
-        navigate("/tasks");        // back to task list
+        navigate("/tasks");
       }
 
     } catch (err) {

@@ -98,7 +98,7 @@ const Register = () => {
         // Auto login after register
         login(data.user, data.token);
 
-        toast.success("Registration successful 🎉");
+        toast.success("Registration successful");
 
         // Redirect to dashboard
         navigate("/dashboard");

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 export default function CreateTask() {
   const today = new Date().toISOString().split("T")[0];
@@ -44,37 +45,35 @@ export default function CreateTask() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Run validation first
     if (!validate()) return;
 
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:5000/api/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const res = await api.post(
+        "/tasks",
+        {
           title,
           description,
           dueDate,
-          status,     // todo | in-progress | done
-          priority,   // low | medium | high
-        }),
-      });
+          status,
+          priority,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (!res.ok) throw new Error("Failed to create task");
-
-      const data = await res.json();
-      console.log("Task created:", data);
-
+      console.log("Task created:", res.data);
       navigate("/tasks");
+
     } catch (err) {
       console.error("Error creating task:", err);
     }
   };
+
 
   return (
   <>

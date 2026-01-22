@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
 import { FaCheckCircle, FaEdit, FaTrash, FaArrowLeft } from "react-icons/fa";
 import Spinner from "../components/Spinner";
+import toast from "react-hot-toast";
+import api from "../api/axios";
 
 export default function TaskDetails() {
   const { id } = useParams();
@@ -19,16 +21,13 @@ export default function TaskDetails() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
+        const res = await api.get(`/tasks/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!res.ok) throw new Error("Failed to fetch task");
-
-        const data = await res.json();
-        setTask(data);
+        setTask(res.data);
       } catch (error) {
         console.error("Error fetching task:", error);
       } finally {
@@ -63,45 +62,69 @@ export default function TaskDetails() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: "done" }),
-      });
+      const res = await api.put(
+        `/tasks/${id}`,
+        { status: "done" },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (!res.ok) throw new Error("Failed to mark complete");
-
-      const updated = await res.json();
-      setTask(updated);
+      setTask(res.data);
     } catch (error) {
       console.error("Error marking complete:", error);
     }
   };
 
   // Delete task
-  const handleDelete = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
-    if (!confirmDelete) return;
+  const handleDelete = () => {
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <p className="font-medium text-gray-800">
+          Are you sure you want to delete this task?
+        </p>
 
-    try {
-      const token = localStorage.getItem("token");
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
 
-      const res = await fetch(`http://localhost:5000/api/tasks/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
 
-      if (!res.ok) throw new Error("Failed to delete task");
+              try {
+                const token = localStorage.getItem("token");
 
-      navigate("/tasks");
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
+                await api.delete(`/tasks/${id}`, {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
+
+                // Success toast
+                toast.success("Task deleted successfully");
+
+                // Go back to tasks list
+                navigate("/tasks");
+
+              } catch (error) {
+                console.error("Error deleting task:", error);
+                toast.error("Failed to delete task");
+              }
+            }}
+            className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   if (loading) {
