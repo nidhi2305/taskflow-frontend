@@ -4,7 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Tasks from "./pages/Tasks";
-import CreateTask from "./pages/createTask";
+import CreateTask from "./pages/CreateTask";
 import EditTask from "./pages/EditTask";
 import TaskDetails from "./pages/TaskDetails";
 import NotFound from "./pages/NotFound";
