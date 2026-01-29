@@ -1,16 +1,42 @@
-# React + Vite
+# TaskFlow – Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TaskFlow is a task management web application that helps users organize, track, and manage their tasks efficiently.  
+This repository contains the frontend of the application built with React.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Project
 
-## React Compiler
+Frontend (Netlify):  
+https://taskflow-mern.netlify.app/
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Backend (Render):  
+https://taskflow-backend-83tp.onrender.com
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+- React (Vite)
+- JavaScript
+- Tailwind CSS
+- Axios
+- React Router DOM
+
+---
+
+## Features
+
+- User authentication (Register & Login)
+- JWT-based protected routes
+- Dashboard with task statistics
+- Create, edit, delete tasks
+- Task status and priority management
+- Search and filter tasks
+- Responsive UI
+
+---
+
+## Author
+
+**Nidhi** 
